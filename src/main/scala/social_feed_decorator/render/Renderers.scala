@@ -11,7 +11,8 @@ class SimpleRenderer extends Renderer {
 
 class TwitterUserNameRenderer extends Renderer {
   override def render(value: String): String = {
-    "@ <a href=\"http://twitter.com/" + value + "\"> " + value + "</a>"
+    val username = value.replaceFirst("@", "")
+    "@ <a href=\"http://twitter.com/" + username + "\"> " + username + "</a>"
   }
 }
 

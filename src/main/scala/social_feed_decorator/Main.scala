@@ -14,16 +14,14 @@ object Main extends App {
 
   val entities =
     Seq(
-      FeedEntity(14, 22, "Facebook", "noun"),
-      FeedEntity(7, 14, "visited", "verb"),
-      FeedEntity(0, 5, "Obama", "noun"),
-      FeedEntity(24, 37, "headquarters:", "someAnotherType"),
-      FeedEntity(55, 67, "elversatile", "twitterUserName"),
-      FeedEntity(37, 54, "http://bit.ly/xyz", "link")
+      FeedEntity(14, 22, "noun"),
+      FeedEntity(0, 5, "noun"),
+      FeedEntity(55, 67, "twitterUserName"),
+      FeedEntity(37, 54, "link")
     )
 
   assert(
-    decorator.decorateFeed(entities) ==
+    decorator.decorateFeed("Obama visited Facebook headquarters: http://bit.ly/xyz @elversatile", entities) ==
       "<strong>Obama</strong> visited <strong>Facebook</strong> headquarters: <a href=\"http://bit.ly/xyz\"> http://bit.ly/xyz</a> @ <a href=\"http://twitter.com/elversatile\"> elversatile</a>"
   )
 

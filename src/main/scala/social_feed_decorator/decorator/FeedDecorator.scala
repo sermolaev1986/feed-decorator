@@ -7,14 +7,23 @@ import social_feed_decorator.render.RendererRegistry
   * Takes parsed entities as input and outputs to string
   */
 trait FeedDecorator {
-  def decorateFeed(entities: Seq[FeedEntity]): String
+  def decorateFeed(rawFeed: String, entities: Seq[FeedEntity]): String
 }
 
 class FeedDecoratorImpl(renderers: RendererRegistry) extends FeedDecorator {
-  override def decorateFeed(entities: Seq[FeedEntity]): String = {
-    entities
+  override def decorateFeed(rawFeed: String, entities: Seq[FeedEntity]): String = {
+    val positionToRendererMapping = entities
+      .map(entity => (entity.startPosition, renderers.get(entity.entityType)))
+      .toMap
+
+    val splitPositions = entities
       .sortBy(_.startPosition)
-      .map(entity => renderers.get(entity.entityType).render(entity.value))
-      .mkString(" ")
+      .flatMap(entity => Seq(entity.startPosition, entity.endPosition))
+      .toList
+
+    (splitPositions zip splitPositions.tail)
+      .map { case (a, b) => (positionToRendererMapping.get(a), rawFeed.substring(a, b)) }
+      .map { case (renderer, token) => renderer.map(_.render(token)).getOrElse(token) }
+      .mkString("")
   }
 }
